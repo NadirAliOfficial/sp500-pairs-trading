@@ -1,0 +1,17 @@
+pandas>=2.0
+numpy>=1.24
+statsmodels>=0.14
+yfinance>=0.2
+scipy>=1.10
+lxml
+certifi
+requests
+databento
+python-dotenv
+google-genai
+openai
+pytz
+ibapi
+schedule
+resend
+flask

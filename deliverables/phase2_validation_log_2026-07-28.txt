@@ -1,0 +1,57 @@
+sp500-pairs-bot -- Phase 2 Component Validation Log
+Date: 2026-07-28
+Environment: VPS <vps-ip>, isolated paper IB Gateway (port 4010), account DU0000000 (Simulated Trading)
+
+NOTE: This is a validation of each Phase 2 component against live services
+(IBKR paper account, Databento, Google Gemini, Resend). It is NOT yet a
+full trading-day session log -- that requires letting main.py run
+unattended through a real 9:30am-3:30pm ET session, which is the next step.
+
+------------------------------------------------------------
+1. Unit test suite
+------------------------------------------------------------
+75 / 75 tests passing across all Phase 1 and Phase 2 modules.
+(spread engine, quantity formula, Gemini blacklist, IBKR order construction,
+live data feed, risk/exit rules, post-trade report builder)
+
+------------------------------------------------------------
+2. IBKR paper account connectivity
+------------------------------------------------------------
+$ python3 -c IBKRClient(...).get_equity_with_loan_value()
+EquityWithLoanValue: 405675.00
+
+$ python3 -c IBKRClient(...).get_todays_market_hours()
+Market hours today: 2026-07-28 09:30:00 - 2026-07-28 16:00:00
+(correctly identified as a normal trading day, not an early close)
+
+------------------------------------------------------------
+3. Gemini Market News Scan -- intraday variant (every 5 min, 9:30am-3:30pm ET)
+------------------------------------------------------------
+Question: "List US Equities with huge market moving news today."
+Got 14 live news items, including:
+
+  NVDA  Negative  Nvidia fell on reports of a $250B OpenAI data center
+                  financing deal raising circular-funding concerns.
+  MU    Negative  Micron slumped amid a global semiconductor pullback.
+  AMD   Negative  AMD declined in a broader semiconductor sell-off.
+  MRVL  Negative  Marvell pulled back on AI valuation concerns.
+  PYPL  Positive  PayPal traded higher after beating Q2 2026 estimates.
+  OPK   Positive  OPKO Health gained 9%+ after beating Q2 estimates and
+                  raising full-year guidance.
+
+Symbols with Positive/Negative sentiment are excluded from trading for 24
+hours; only Neutral-sentiment symbols stay tradeable.
+
+------------------------------------------------------------
+4. Post-Trade Report delivery (Resend API)
+------------------------------------------------------------
+Test send to orders@example.com: accepted by Resend API, no errors.
+
+------------------------------------------------------------
+Still pending before Phase 2 is fully closed out
+------------------------------------------------------------
+- A complete unattended trading-day run (8:25am reqTradingHours check
+  through 3:59pm flatten and 4pm report) with real entry/exit signals,
+  not just the connectivity checks above
+- Confirmation that the Resend test email actually landed in the
+  example.com inbox (accepted by the API is not the same as delivered)

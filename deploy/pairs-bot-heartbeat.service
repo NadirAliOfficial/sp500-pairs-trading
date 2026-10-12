@@ -1,0 +1,20 @@
+[Unit]
+Description=sp500 Pairs Trading Bot Heartbeat Watchdog (Telegram alerts)
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/pairs-bot
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/root/pairs-bot/venv/bin/python3 -u phase2/heartbeat_monitor.py
+Restart=always
+RestartSec=15
+StandardOutput=append:/root/pairs-bot/data/heartbeat_monitor.log
+StandardError=append:/root/pairs-bot/data/heartbeat_monitor.log
+
+[Install]
+WantedBy=multi-user.target

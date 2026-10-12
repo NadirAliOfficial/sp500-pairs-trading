@@ -1,0 +1,21 @@
+[Unit]
+Description=sp500 Pairs Trading Bot (Phase 2)
+After=ibgateway-paper.service
+Requires=ibgateway-paper.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/pairs-bot
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=/bin/sleep 60
+ExecStart=/root/pairs-bot/venv/bin/python3 -u phase2/main.py
+Restart=no
+TimeoutStartSec=200
+StandardOutput=append:/root/pairs-bot/data/pairs_bot_service.log
+StandardError=append:/root/pairs-bot/data/pairs_bot_service.log
+
+[Install]
+WantedBy=multi-user.target
